@@ -3,6 +3,8 @@
 // 128 Words
 // 7 bit Address Width
 
+`timescale 1ns/1ps
+
 module sram(
     // Clock and Reset Ports
     input logic clk,
