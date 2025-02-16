@@ -17,8 +17,8 @@ module alu(
 );
 
 import sigma_pkg::*; // Importing the package for better readability
-// ALU Operation
 
+// ALU Operation
 always_comb begin
     case(alu_op)
         ALU_ADD: {carry_flag, result} = operand1 + operand2; // ADD

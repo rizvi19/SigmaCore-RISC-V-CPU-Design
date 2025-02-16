@@ -29,4 +29,10 @@ The memory module is responsible for storing instructions and data. It typically
 
 Every instructions will be implemented one by one. First we will implement the `add`, `sub`, `and`, `or`, `xor`, `slt` (Set Less than), `sltu` (set less than Unsigned)  instruction in `ALU.sv`.
 
+First of all we will implement the Immediate (I-Type) type instruction. 
+
+.................................Pic of instruction table......
+
+In this picture from RISC-V architecture we can see that the Immediate value can be in several bits like: `[31:20]`, `[31:25]`, `[11:7]`, `[31:12]`. So, if we want to extract the immediate value then we have to take the the bit `[31:7]` (total `25` bits) and then we have to `Sign Extend` the value. 
+
 
