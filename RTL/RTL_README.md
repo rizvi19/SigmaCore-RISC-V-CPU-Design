@@ -31,7 +31,8 @@ Every instructions will be implemented one by one. First we will implement the `
 
 First of all we will implement the Immediate (I-Type) type instruction. 
 
-.................................Pic of instruction table......
+![image](https://github.com/user-attachments/assets/0079ef34-2586-4931-9703-0c0daf089c4c)
+
 
 In this picture from RISC-V architecture we can see that the Immediate value can be in several bits like: `[31:20]`, `[31:25]`, `[11:7]`, `[31:12]`. So, if we want to extract the immediate value then we have to take the the bit `[31:7]` (total `25` bits) and then we have to `Sign Extend` the value. 
 
