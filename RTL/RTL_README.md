@@ -9,6 +9,7 @@ This README provides an overview of the implementation of `register_file.sv` and
 
 ## Description
 
+
 ### Register File (`register_file.sv`)
 
 The register file is a critical component of the CPU, responsible for storing and providing access to the CPU's registers. It typically includes the following features:
