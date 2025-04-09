@@ -1,0 +1,2 @@
+iverilog -g2012 -o OBJECT_FILE_NAME ../../packages/sigma_pkg.sv DESIGN.sv TESTBENCH.sv
+gtkwave TESTBENCH.vcd

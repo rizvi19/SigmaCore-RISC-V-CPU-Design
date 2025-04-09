@@ -13,12 +13,12 @@ package sigma_pkg;
         ALU_SRL  = 4'b0110,
         ALU_SRA  = 4'b0111, 
         ALU_SLT  = 4'b1000,
-        ALU_SLTU = 4'b1001,
+        ALU_SLTU = 4'b1001
     } alu_op_e;
 
     // Define types for Sign Extender
     typedef enum logic [1:0] {
-        TYPE_I = 2'b00,
+        TYPE_I = 2'b00
     } ins_type;
 
 endpackage
