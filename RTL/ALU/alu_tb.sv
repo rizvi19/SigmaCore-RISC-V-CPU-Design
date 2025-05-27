@@ -37,67 +37,72 @@ module alu_tb;
         .carry_flag(carry_flag_tb)
     );
 
-    // Testbench code
-    initial begin
-        $dumpfile("alu_waveform.vcd");
-        $dumpvars(0, alu_tb);
 
-        task apply_and_check; // A task to apply the Test Cases
-            input [31:0] op1_in, op2_in;
-            input [3:0]  op_code_in;
-            input [31:0] expected_result;
-            input        expected_zero, expected_neg, expected_ovf, expected_carry;
-            input string test_name;
-            integer      delay_time = 10; // delay in ns
 
-            begin
-                #delay_time;
-                operand1_tb = op1_in;
-                operand2_tb = op2_in;
-                alu_op_tb   = op_code_in;
-                #delay_time; 
+    task automatic apply_and_check; // A task to apply the Test Cases
+        input [31:0] op1_in, op2_in;
+        input [3:0]  op_code_in;
+        input [31:0] expected_result;
+        input        expected_zero, expected_neg, expected_ovf, expected_carry;
+        input string test_name;
+        integer      delay_time = 10; // delay in ns
 
-                $display("[%0t ns] Test: %s", $time, test_name);
-                $display("  Inputs: op1=%h, op2=%h, alu_op=%b (%s)",
-                         operand1_tb, operand2_tb, alu_op_tb, op_code_to_string(alu_op_tb));
-                $display("  Outputs: Result=%h, Z=%b, N=%b, O=%b, C=%b",
-                         result_tb, zero_flag_tb, negative_flag_tb, overflow_flag_tb, carry_flag_tb);
+        begin
+            #delay_time;
+            operand1_tb = op1_in;
+            operand2_tb = op2_in;
+            alu_op_tb   = op_code_in;
+            #delay_time; 
 
-                if (result_tb !== expected_result) begin
-                    $error("  MISMATCH! Result: %h, Expected: %h", result_tb, expected_result);
-                end
-                if (zero_flag_tb !== expected_zero) begin
-                    $error("  MISMATCH! Zero Flag: %b, Expected: %b", zero_flag_tb, expected_zero);
-                end
-                if (negative_flag_tb !== expected_neg) begin
-                    $error("  MISMATCH! Negative Flag: %b, Expected: %b", negative_flag_tb, expected_neg);
-                end
-                if (overflow_flag_tb !== expected_ovf) begin
-                    $error("  MISMATCH! Overflow Flag: %b, Expected: %b", overflow_flag_tb, expected_ovf);
-                end
-                if (alu_op_tb == ALU_ADD || alu_op_tb == ALU_SUB) begin // Carry is most relevant for ADD/SUB
-                    if (carry_flag_tb !== expected_carry) begin
-                        $error("  MISMATCH! Carry Flag: %b, Expected: %b", carry_flag_tb, expected_carry);
-                    end
+            $display("[%0t ns] Test: %s", $time, test_name);
+            $display("  Inputs: op1=%h, op2=%h, alu_op=%b (%s)",
+                        operand1_tb, operand2_tb, alu_op_tb, op_code_to_string(alu_op_tb));
+            $display("  Outputs: Result=%h, Z=%b, N=%b, O=%b, C=%b",
+                        result_tb, zero_flag_tb, negative_flag_tb, overflow_flag_tb, carry_flag_tb);
+
+            if (result_tb !== expected_result) begin
+                $error("  MISMATCH! Result: %h, Expected: %h", result_tb, expected_result);
+            end
+            if (zero_flag_tb !== expected_zero) begin
+                $error("  MISMATCH! Zero Flag: %b, Expected: %b", zero_flag_tb, expected_zero);
+            end
+            if (negative_flag_tb !== expected_neg) begin
+                $error("  MISMATCH! Negative Flag: %b, Expected: %b", negative_flag_tb, expected_neg);
+            end
+            if (overflow_flag_tb !== expected_ovf) begin
+                $error("  MISMATCH! Overflow Flag: %b, Expected: %b", overflow_flag_tb, expected_ovf);
+            end
+            if (alu_op_tb == ALU_ADD || alu_op_tb == ALU_SUB) begin // Carry is most relevant for ADD/SUB
+                if (carry_flag_tb !== expected_carry) begin
+                    $error("  MISMATCH! Carry Flag: %b, Expected: %b", carry_flag_tb, expected_carry);
                 end
             end
-        endtask
+        end
+    endtask
 
-        // Function to convert ALU op code to string for display
-        function string op_code_to_string(input [3:0] op_code);
-            case(op_code)
-                ALU_ADD: return "ADD";
-                ALU_SUB: return "SUB";
-                ALU_AND: return "AND";
-                ALU_OR:  return "OR";
-                ALU_XOR: return "XOR";
-                ALU_SLL: return "SLL";
-                ALU_SRL: return "SRL";
-                ALU_SRA: return "SRA";
-                
-                default: return "UNKNOWN";
-            endcase
-        endfunction
+    // Function to convert ALU op code to string for display
+    function automatic string op_code_to_string(input [3:0] op_code);
+        case(op_code)
+            ALU_ADD: return "ADD";
+            ALU_SUB: return "SUB";
+            ALU_AND: return "AND";
+            ALU_OR:  return "OR";
+            ALU_XOR: return "XOR";
+            ALU_SLL: return "SLL";
+            ALU_SRL: return "SRL";
+            ALU_SRA: return "SRA";
+            
+            default: return $sformatf("OP:%b", op_code);
+        endcase
+    endfunction
+
+
+
+
+    // Test Cases
+    initial begin
+        $dumpfile("alu_waveforms.vcd");
+        $dumpvars(0, alu_tb);
 
         // --- Test Cases ---
         // apply_and_check(op1, op2, alu_op, exp_res, exp_Z, exp_N, exp_O, exp_C, "Test Name");
