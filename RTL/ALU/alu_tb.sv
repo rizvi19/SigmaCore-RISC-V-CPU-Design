@@ -145,7 +145,7 @@ module alu_tb;
         apply_and_check(32'h00000001, 32'd34,       ALU_SLL, 32'h00000004, 1'b0, 1'b0, 1'b0, 1'b0, "SLL (1 << 34), effective (1 << 2)");
         // Test 19: Default ALU op (if not defined in package, or an unused code)
         // Assuming 4'b1111 is not a defined ALU_OP in sigma_pkg.sv
-        apply_and_check(32'd10, 32'd5, 4'b1111, 32'hxxxxxxxx, 1'b0, 1'b1, 1'b0, 1'b0, "Default/Unknown ALU Op");
+        apply_and_check(32'd10, 32'd5, 4'b1111, 32'h0, 1'b1, 1'b0, 1'b0, 1'b0, "Default/Unknown ALU Op");
 
 
         $display("ALU Testbench Simulation Finished.");

@@ -39,17 +39,22 @@ module alu(
 
 import sigma_pkg::*; // Importing the package for better readability
 
-logic [32:0] ext_sum; // Using For overflow detection, so that we can calculate the carry out 
+logic [32:0] ext_sum_sub; // Using For overflow detection, so that we can calculate the carry out 
 
 // ALU Operation
 always_comb begin
-    carry_flag = 1'b0; // default no carry = 0
+    logic [4:0] shift_temp;
+    
+    result        = 32'b0;
+    carry_flag    = 1'b0; // default no carry = 0
     overflow_flag = 1'b0; // default no overflow = 0
 
 
     case(alu_op)
         ALU_ADD: begin
-            {carry_flag, result} = operand1 + operand2; // doing the ADD work
+            ext_sum_sub = {1'b0, operand1} + {1'b0, operand2}; // Extending to 33 bits for carry detection
+            result = ext_sum_sub[31:0]; // tking the lower 32 bits as rslt
+            carry_flag = ext_sum_sub[32]; // The 33rd bit is the carry out
 
             // Overflow
             if (operand1[31] == operand2[31] && operand1[31] != result[31]) begin // 1 + 1 = 0 --> Overflow
@@ -58,7 +63,9 @@ always_comb begin
         end
 
         ALU_SUB: begin
-            {carry_flag, result} = operand1 + (~operand2 + 1'b1); // SUB using 2's complement
+            ext_sum_sub = {1'b0, operand1} + {1'b0, ~operand2} + 33'd1; 
+            result = ext_sum_sub[31:0]; // Taking the lower 32 bits as result
+            carry_flag = ext_sum_sub[32]; // The 33rd bit is the carry out
 
             // Overflow
             if (operand1[31] != operand2[31] && operand1[31] != result[31]) begin // 1 - 1 = 0 --> Overflow
@@ -73,14 +80,23 @@ always_comb begin
         ALU_XOR: result = operand1 ^ operand2; // XOR
 
         // lower 5 bit shift (RISC-V standard)
-        ALU_SLL: result = operand1 << operand2[4:0]; // SLL
+        ALU_SLL: begin 
+            shift_temp = operand2[4:0]; 
+            result = operand1 << shift_temp; // SLL
+        end
 
-        ALU_SRL: result = operand1 >> operand2[4:0]; // SRL
+        ALU_SRL: begin
+            shift_temp = operand2[4:0];
+            result = operand1 >> shift_temp; // SRL
+        end
 
-        ALU_SRA: result = $signed(operand1) >>> operand2[4:0]; // SRA
+        ALU_SRA: begin
+            shift_temp = operand2[4:0];
+            result = $signed(operand1) >>> shift_temp; // SRA
+        end
 
-        default: result = 32'bxxxxxxxx; // Default case
-        
+        default: result = 32'b0; // Default case
+
     endcase
 end
 
