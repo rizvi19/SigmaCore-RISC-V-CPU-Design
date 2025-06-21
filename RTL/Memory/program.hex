@@ -1,0 +1,9 @@
+// Each line is a 32-bit instruction
+
+12345678 // Instruction at address 0x00
+ABCDEF01 // Instruction at address 0x04
+DEADBEEF // Instruction at address 0x08
+00000000 // Instruction at address 0x0C
+FFFFFFFF // Instruction at address 0x10
+
+// it will go on

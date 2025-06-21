@@ -31,11 +31,7 @@ initial begin
 
     $display("IMEM: Initializing instruction memory from program.hex...");
 
-    try begin
-        $readmemh("program.hex", memory);
-    end catch (e) begin
-        $error("IMEM: Failed to read 'program.hex'");
-    end
+    $readmemh("program.hex", memory);
 
 end
 

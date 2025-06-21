@@ -1,0 +1,101 @@
+$date
+	Sat Jun 21 16:33:57 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module instruction_memory_tb $end
+$var wire 32 ! instruction_out_tb [31:0] $end
+$var parameter 32 " CLOCK_PERIOD $end
+$var reg 1 # clk_tb $end
+$var reg 32 $ read_addr_tb [31:0] $end
+$scope module dut $end
+$var wire 1 # clk $end
+$var wire 32 % read_addr_in [31:0] $end
+$var parameter 32 & ADDR_WIDTH $end
+$var parameter 32 ' MEM_SIZE_WORDS $end
+$var reg 32 ( instruction_out [31:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b10000000000 '
+b1010 &
+b1010 "
+$end
+#0
+$dumpvars
+bx (
+b0 %
+b0 $
+0#
+bx !
+$end
+#5000
+b10010001101000101011001111000 !
+b10010001101000101011001111000 (
+1#
+#10000
+0#
+#15000
+1#
+#20000
+0#
+#25000
+1#
+#30000
+0#
+#35000
+b1000 $
+b1000 %
+1#
+#40000
+0#
+#45000
+b11011110101011011011111011101111 !
+b11011110101011011011111011101111 (
+1#
+#50000
+0#
+#55000
+b10000 $
+b10000 %
+1#
+#60000
+0#
+#65000
+b11111111111111111111111111111111 !
+b11111111111111111111111111111111 (
+1#
+#70000
+0#
+#75000
+b100 $
+b100 %
+1#
+#80000
+0#
+#85000
+b10101011110011011110111100000001 !
+b10101011110011011110111100000001 (
+1#
+#90000
+0#
+#95000
+b1100 $
+b1100 %
+1#
+#100000
+0#
+#105000
+b0 !
+b0 (
+1#
+#110000
+0#
+#115000
+1#
