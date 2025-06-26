@@ -47,7 +47,8 @@ package sigma_pkg;
     parameter logic [6:0] OPCODE_STORE  = 7'b0100011; // S-Type: Stores (sw, sh, sb)
     parameter logic [6:0] OPCODE_IMM    = 7'b0010011; // I-Type: Immediate arithmetic (addi, etc.)
     parameter logic [6:0] OPCODE_RTYPE  = 7'b0110011; // R-Type: Register-register arithmetic (add, etc.)
-
+    parameter logic [6:0] OPCODE_LOAD   = 7'b0000011; // Opcode for lw, lh, lb
+    parameter logic [6:0] OPCODE_BRANCH = 7'b1100011; // Opcode for beq, bne, etc.
 
 
     /*
@@ -63,6 +64,7 @@ package sigma_pkg;
 
     // For R-Type, funct7 differentiates between ADD and SUB. For ADD, it's all zeros.
     parameter logic [6:0] FUNCT7_ADD = 7'b0000000;
+    parameter logic [6:0] FUNCT7_SUB = 7'b0100000;
 
 
     /*
@@ -100,9 +102,9 @@ package sigma_pkg;
     parameter logic [3:0] S_DECODE         = 4'd1;  // Instruction Decode and Register Fetch
     parameter logic [3:0] S_MEM_ADDR_COMP  = 4'd2;  // Memory Address Computation (for LW/SW)
     parameter logic [3:0] S_MEM_WRITE      = 4'd3;  // Memory Write (for SW)
-    parameter logic [3:0] S_EXEC_R_TYPE    = 4'd4;  // R-Type Execution (ADD, SUB, etc.)
+    parameter logic [3:0] S_EXEC_R_TYPE    = 4'd4;  // R-Type Execution (ADD, SUB, etc....)
     parameter logic [3:0] S_WB_R_TYPE      = 4'd5;  // R-Type Write-Back
-    parameter logic [3:0] S_EXEC_I_TYPE    = 4'd6;  // I-Type Execution (ADDI, etc.)
+    parameter logic [3:0] S_EXEC_I_TYPE    = 4'd6;  // I-Type Execution (ADDI, etc...)
     parameter logic [3:0] S_WB_I_TYPE      = 4'd7;  // I-Type and LUI Write-Back
 
 

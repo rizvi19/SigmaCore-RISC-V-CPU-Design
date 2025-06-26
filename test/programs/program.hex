@@ -1,9 +1,14 @@
-// Each line is a 32-bit instruction
+// Test Program: Executes LUI, ADDI, ADD, SW
+// Assembly:
+//   lui  t0, 0xCAFEF        ; t0 (x5) = 0xCAFEF000
+//   addi t1, t0, 256        ; t1 (x6) = 0xCAFEF000 + 0x100 = 0xCAFEF100
+//   add  t2, t0, t1        ; t2 (x7) = 0xCAFEF000 + 0xCAFEF100 = 0x95FDE100 (overflows, which is fine)
+//   sw   t2, 12(t0)        ; Store value of t2 at address 0xCAFEF000 + 12 = 0xCAFEF00C
 
-12345678 // Instruction at address 0x00
-ABCDEF01 // Instruction at address 0x04
-DEADBEEF // Instruction at address 0x08
-00000000 // Instruction at address 0x0C
-FFFFFFFF // Instruction at address 0x10
+cafef2b7
+10028313
+006283b3
+0072a623
 
-// it will go on
+
+
