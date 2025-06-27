@@ -64,6 +64,7 @@ module control_unit_fsm (
     //    Determines the next state based on current state and inputs.
     //==================================================================
     always_comb begin
+        next_state = S_FETCH;
         case (current_state)
 
             S_FETCH: begin
@@ -110,9 +111,10 @@ module control_unit_fsm (
             S_WB_I_TYPE: begin // For ADDI and LUI
                 next_state = S_FETCH; // Write --> Fetch next instruction
             end
-            default: begin
-                next_state = S_FETCH; // Invalid state --> FETCH
-            end
+            
+            // default: begin
+            //     next_state = S_FETCH; // Invalid state --> FETCH
+            // end
         endcase
     end
 
@@ -200,6 +202,12 @@ module control_unit_fsm (
                 mem_to_reg = MEM_TO_REG_ALU_RES; // Data comes from ALU path (which for LUI is just the immediate)
             end
         endcase
+    end
+
+    always_ff @(posedge clk or negedge reset_n) begin
+        if (!reset_n) current_state <= S_FETCH;
+        else current_state <= next_state;
+        $display("State: %d, Opcode: %h", current_state, opcode);
     end
 
 endmodule

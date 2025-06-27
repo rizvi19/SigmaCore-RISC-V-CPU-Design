@@ -146,8 +146,10 @@ module multicycle_cpu (
 
     // ALUOut Register - latches the ALU result
     always_ff @(posedge clk) begin
-        if(alu_out_write)
-            alu_result_register <= alu_result;
+        
+        alu_result_register <= alu_result;
+           
+       
     end
 
     //================================================================
@@ -192,6 +194,11 @@ module multicycle_cpu (
             2'b10:   pc_next = alu_result_register; // Jump target address from ALUOut (for JALR)
             default: pc_next = pc_current;
         endcase
+    end
+
+
+    always @(posedge clk) begin
+        if (reg_write) $display("Write to x%d: %h, mem_to_reg: %b", instruction_register[11:7], reg_write_data, mem_to_reg);
     end
 
 endmodule

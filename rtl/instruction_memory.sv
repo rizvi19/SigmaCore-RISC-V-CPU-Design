@@ -21,7 +21,7 @@ module instruction_memory(
 
 );
 
-localparam MEM_SIZE_WORDS = 1024;
+localparam MEM_SIZE_WORDS = 16;
 localparam ADDR_WIDTH = $clog2(MEM_SIZE_WORDS);
 
 logic [31:0] memory [0:MEM_SIZE_WORDS-1];
@@ -32,6 +32,10 @@ initial begin
     $display("IMEM: Initializing instruction memory from program.hex...");
 
     $readmemh("program.hex", memory);
+
+    for (int i = 4; i < MEM_SIZE_WORDS; i++) begin
+        memory[i] = 32'h00000013;
+    end
 
 end
 
