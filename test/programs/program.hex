@@ -1,14 +1,59 @@
-// Test Program: Executes LUI, ADDI, ADD, SW
-// Assembly:
-//   lui  t0, 0xCAFEF        ; t0 (x5) = 0xCAFEF000
-//   addi t1, t0, 256        ; t1 (x6) = 0xCAFEF000 + 0x100 = 0xCAFEF100
-//   add  t2, t0, t1        ; t2 (x7) = 0xCAFEF000 + 0xCAFEF100 = 0x95FDE100 (overflows, which is fine)
-//   sw   t2, 12(t0)        ; Store value of t2 at address 0xCAFEF000 + 12 = 0xCAFEF00C
+cafef2b7  // LUI t0, 0xCAFEF   - Load upper immediate: t0 = 0xCAFEF000
+          // Binary: 0110111 00101 00000 00000 00000 1100101011111110
+          //         opcode  rd    rs1   rs2   funct7       imm[31:12]
 
-cafef2b7
-10028313
-006283b3
-0072a623
+10028293  // ADDI t1, t0, 0x100 - Add immediate: t1 = t0 + 0x100 = 0xCAFEF100
+          // Binary: 0010011 01001 00101 000 00000 000001000000
+          //         opcode  rd    rs1   funct3 imm[11:0]
 
+006282b3  // ADD t2, t0, t1    - Add: t2 = t0 + t1 = 0x195DE200
+          // Binary: 0110011 01010 00101 000 00101 0000000
+          //         opcode  rd    rs1   funct3 rs2   funct7
 
+406282b3  // SUB t2, t0, t1    - Subtract: t2 = t0 - t1 = 0xFFFFE900
+          // Binary: 0110011 01010 00101 000 00101 0100000
+          //         opcode  rd    rs1   funct3 rs2   funct7
 
+0052f2b3  // AND t2, t0, t1    - AND: t2 = t0 & t1 = 0xCAFEF000
+          // Binary: 0110011 01010 00101 111 00101 0000000
+          //         opcode  rd    rs1   funct3 rs2   funct7
+
+0052e2b3  // OR t2, t0, t1     - OR: t2 = t0 | t1 = 0xCAFEF100
+          // Binary: 0110011 01010 00101 110 00101 0000000
+          //         opcode  rd    rs1   funct3 rs2   funct7
+
+0052c2b3  // XOR t2, t0, t1    - XOR: t2 = t0 ^ t1 = 0x00000100
+          // Binary: 0110011 01010 00101 100 00101 0000000
+          //         opcode  rd    rs1   funct3 rs2   funct7
+
+0262a2b3  // SLT t2, t0, t1    - Set less than: t2 = (t0 < t1) ? 1 : 0 = 0
+          // Binary: 0110011 01010 00101 010 00101 0000000
+          //         opcode  rd    rs1   funct3 rs2   funct7
+
+2002a2b3  // SLTI t2, t0, 0x200 - Set less than immediate: t2 = (t0 < 0x200) ? 1 : 0 = 0
+          // Binary: 0010011 01010 00101 010 00000 0000010000000
+          //         opcode  rd    rs1   funct3 imm[11:0]
+
+002292b3  // SLL t2, t0, t1[4:0] - Shift left logical: t2 = t0 << (t1 & 0x1F) = 0xCAFEF000
+          // Binary: 0110011 01010 00101 001 00101 0000000
+          //         opcode  rd    rs1   funct3 rs2   funct7
+
+0022d2b3  // SRL t2, t0, t1[4:0] - Shift right logical: t2 = t0 >> (t1 & 0x1F) = 0xCAFEF000
+          // Binary: 0110011 01010 00101 101 00101 0000000
+          //         opcode  rd    rs1   funct3 rs2   funct7
+
+4022d2b3  // SRA t2, t0, t1[4:0] - Shift right arithmetic: t2 = t0 >>> (t1 & 0x1F) = 0xCAFEF000
+          // Binary: 0110011 01010 00101 101 00101 0100000
+          //         opcode  rd    rs1   funct3 rs2   funct7
+
+00c2a283  // LW t1, 0xC(t0)    - Load word: t1 = mem[t0 + 0xC] (assume 0x95FDE100)
+          // Binary: 0000011 01001 00101 010 00000 00000000001100
+          //         opcode  rd    rs1   funct3 imm[11:0]
+
+0072a623  // SW t2, 0xC(t0)    - Store word: mem[t0 + 0xC] = t2
+          // Binary: 0100011 01010 00101 010 01010 00000000001100
+          //         opcode  imm[11:5] rs2 funct3 rs1 imm[4:0]
+
+fe6290e3  // BEQ t0, t1, -28   - Branch if equal: if t0 == t1, PC = PC - 28
+          // Binary: 1100011 00101 01001 000 01111 11111110
+          //         opcode  imm[12|10:5] rs2 funct3 rs1 imm[4:1|11]

@@ -52,6 +52,8 @@ module multicycle_cpu (
     logic [3:0]  alu_op;
     logic [31:0] reg_write_data;
     logic [31:0] mem_read_data;
+    logic [2:0]  funct3; // Added for R-type differentiation
+    logic [6:0]  funct7; // Added for R-type differentiation
 
     //================================================================
     // 1. Instruction Fetch (IF) Stage Components
@@ -79,6 +81,8 @@ module multicycle_cpu (
             instruction_register <= instruction_from_imem;
     end
     assign instruction_out = instruction_register;
+    assign funct3 = instruction_register[14:12]; // Extract funct3
+    assign funct7 = instruction_register[31:25]; // Extract funct7
 
     //================================================================
     // 2. Instruction Decode & Operand Fetch (ID) Stage Components
@@ -99,8 +103,8 @@ module multicycle_cpu (
     
     // A and B registers to hold operands steady for the ALU
     always_ff @(posedge clk) begin
-        if(reg_a_write) reg_a <= reg_file_read_data1;
-        if(reg_b_write) reg_b <= reg_file_read_data2;
+        if (reg_a_write) reg_a <= reg_file_read_data1;
+        if (reg_b_write) reg_b <= reg_file_read_data2;
     end
 
     // Sign Extender
@@ -130,8 +134,8 @@ module multicycle_cpu (
     // ALU Control and ALU
     alu_control alu_ctrl (
         .alu_op_type_in (alu_op_type),
-        .funct3_in      (instruction_register[14:12]),
-        .funct7_in      (instruction_register[31:25]),
+        .funct3_in      (funct3),
+        .funct7_in      (funct7),
         .alu_op_out     (alu_op)
     );
 
@@ -146,10 +150,8 @@ module multicycle_cpu (
 
     // ALUOut Register - latches the ALU result
     always_ff @(posedge clk) begin
-        
-        alu_result_register <= alu_result;
-           
-       
+        if (alu_out_write)
+            alu_result_register <= alu_result;
     end
 
     //================================================================
@@ -168,10 +170,8 @@ module multicycle_cpu (
 
     // Memory Data Register (MDR) - latches data read from memory
     always_ff @(posedge clk) begin
-        // In a real implementation, an mdr_write signal would be used.
-        // For simplicity, we can assume it latches whenever a read is performed.
-        if(mem_read)
-           mem_data_register <= mem_read_data;
+        if (mem_read)
+            mem_data_register <= mem_read_data;
     end
 
     //================================================================
@@ -186,19 +186,21 @@ module multicycle_cpu (
     //================================================================
 
     // MUX for selecting the next value of the PC
-    // pc_source selects between PC+4 (calculated by ALU), branch target (ALUOut), or jump target.
     always_comb begin
         case (pc_source)
-            2'b00:   pc_next = alu_result;      // Result of PC+4 calculation
-            2'b01:   pc_next = alu_result_register; // Branch target address from ALUOut
-            2'b10:   pc_next = alu_result_register; // Jump target address from ALUOut (for JALR)
+            2'b00:   pc_next = alu_result;      // PC + 4 (default)
+            2'b01:   pc_next = pc_current + sign_extended_imm; // Branch target (PC + immediate)
+            2'b10:   pc_next = alu_result_register; // Jump target (for JALR, if added later)
             default: pc_next = pc_current;
         endcase
     end
 
-
-    always @(posedge clk) begin
-        if (reg_write) $display("Write to x%d: %h, mem_to_reg: %b", instruction_register[11:7], reg_write_data, mem_to_reg);
+    // Simulation-only debug
+    initial begin
+        $display("Simulation Debug: Monitoring register writes");
+        forever @(posedge clk) begin
+            if (reg_write) $display("Write to x%d: %h, mem_to_reg: %b", instruction_register[11:7], reg_write_data, mem_to_reg);
+        end
     end
 
 endmodule

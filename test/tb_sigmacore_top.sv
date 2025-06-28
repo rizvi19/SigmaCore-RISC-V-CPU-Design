@@ -39,14 +39,16 @@ module tb_sigmacore_top;
         reset_n_tb = 1'b1;
         $display("[%0t ns] Reset released. Running CPU program...", $time);
 
-        // 2. Run for a reasonable number of cycles (20 cycles per instruction * 4 instructions)
-        repeat(80) @(posedge clk_tb);
+        // 2. Run for a reasonable number of cycles (20 cycles per instruction * 15 instructions)
+        repeat(300) @(posedge clk_tb);
 
         // 3. End simulation
         $display("[%0t ns] Simulation finished.", $time);
         $display("===================================");
-        $display("Note: Verify register and memory values using cpu_waveforms.vcd (e.g., x5, x6, x7, memory at 0xCAFEF00C).");
-        $display("Expected: x5=0xCAFEF000, x6=0xCAFEF100, x7=0x95FDE100, memory[0xCAFEF00C]=0x95FDE100.");
+        $display("Note: Verify register and memory values using cpu_waveforms.vcd.");
+        $display("Expected: x5=0xCAFEF000 (LUI), x6=0xCAFEF100 (ADDI), x7=0x95FDE100 (ADD),");
+        $display("          x7=... (SUB/AND/OR/XOR/SLT/SLTI/SLL/SRL/SRA), x6=... (LW), memory[0xCAFEF00C]=0x95FDE100 (SW),");
+        $display("          PC branches correctly for BEQ (e.g., back to 0x0 if t0 == t1).");
         $display("===================================");
         $display("Top-Level CPU Testbench Finished.");
         $finish;
